@@ -1,0 +1,19 @@
+environment:
+  jail:
+    version: "13.3-RELEASE"
+    arch: "amd64"
+
+  make.conf: |
+    DEFAULT_VERSIONS+=ssl=openssl
+    DEFAULT_VERSIONS+=pgsql=15
+    OPTIONS_SET+=DOCS
+
+packages:
+  - name: "nginx"
+    options:
+      HTTP_SSL: "on"
+      HTTP_GZIP_STATIC: "on"
+
+  - name: "postgresql15-server"
+    options:
+      SSL: "on"
