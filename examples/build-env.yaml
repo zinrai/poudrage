@@ -9,7 +9,7 @@ environment:
     OPTIONS_SET+=DOCS
 
 packages:
-  - name: "nginx"
+  - name: "www/nginx"
     options: |
       OPTIONS_FILE_UNSET+=HTTP_PERL
       OPTIONS_FILE_SET+=HTTP_RANDOM_INDEX

@@ -14,5 +14,5 @@ func Build(cfg *config.Config) error {
 	}
 
 	jailName := poudriere.FormatJailName(cfg.Environment.Jail.Version, cfg.Environment.Jail.Arch)
-	return client.BuildPackages(jailName, pkgs)
+	return client.BuildPackages(jailName, cfg.Environment.Jail.Version, pkgs)
 }

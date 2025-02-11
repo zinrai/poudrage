@@ -28,23 +28,29 @@ func FormatJailName(version, arch string) string {
 	return strings.ReplaceAll(name, ".", "_")
 }
 
-func (c *Client) CreateJail(name, version, arch string) error {
-	cmd := exec.Command(c.executable, "jail", "-c", "-j", name, "-v", version, "-a", arch)
+func (c *Client) runCommand(args ...string) error {
+	fmt.Printf("Executing: %s %s\n", c.executable, strings.Join(args, " "))
+	cmd := exec.Command(c.executable, args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
+}
+
+func (c *Client) runCommandOutput(args ...string) ([]byte, error) {
+	fmt.Printf("Executing: %s %s\n", c.executable, strings.Join(args, " "))
+	return exec.Command(c.executable, args...).Output()
+}
+
+func (c *Client) CreateJail(name, version, arch string) error {
+	return c.runCommand("jail", "-c", "-j", name, "-v", version, "-a", arch)
 }
 
 func (c *Client) UpdateJail(name string) error {
-	cmd := exec.Command(c.executable, "jail", "-u", "-j", name)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
+	return c.runCommand("jail", "-u", "-j", name)
 }
 
 func (c *Client) JailExists(name string) (bool, error) {
-	cmd := exec.Command(c.executable, "jail", "-l", "-n")
-	output, err := cmd.Output()
+	output, err := c.runCommandOutput("jail", "-l", "-n")
 	if err != nil {
 		return false, fmt.Errorf("failed to list jails: %w", err)
 	}
@@ -60,24 +66,17 @@ func (c *Client) JailExists(name string) (bool, error) {
 
 func (c *Client) CreatePorts(version string) error {
 	portsName := FormatPortsName(version)
-	cmd := exec.Command(c.executable, "ports", "-c", "-p", portsName)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
+	return c.runCommand("ports", "-c", "-p", portsName)
 }
 
 func (c *Client) UpdatePorts(version string) error {
 	portsName := FormatPortsName(version)
-	cmd := exec.Command(c.executable, "ports", "-u", "-p", portsName)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
+	return c.runCommand("ports", "-u", "-p", portsName)
 }
 
 func (c *Client) PortsExists(version string) (bool, error) {
 	portsName := FormatPortsName(version)
-	cmd := exec.Command(c.executable, "ports", "-l", "-n")
-	output, err := cmd.Output()
+	output, err := c.runCommandOutput("ports", "-l", "-n")
 	if err != nil {
 		return false, fmt.Errorf("failed to list ports: %w", err)
 	}
@@ -95,10 +94,12 @@ func (c *Client) SetOptions(pkgName string, options string) error {
 	optionsDir := fmt.Sprintf("/usr/local/etc/poudriere.d/options/%s", pkgName)
 	optionsPath := filepath.Join(optionsDir, "options")
 
+	fmt.Printf("Creating directory: %s\n", optionsDir)
 	if err := os.MkdirAll(optionsDir, 0755); err != nil {
 		return fmt.Errorf("failed to create options directory: %w", err)
 	}
 
+	fmt.Printf("Writing options to: %s\n", optionsPath)
 	if err := os.WriteFile(optionsPath, []byte(options), 0644); err != nil {
 		return fmt.Errorf("failed to write options file: %w", err)
 	}
@@ -106,10 +107,8 @@ func (c *Client) SetOptions(pkgName string, options string) error {
 	return nil
 }
 
-func (c *Client) BuildPackages(jail string, pkgs []string) error {
-	args := append([]string{"bulk", "-j", jail}, pkgs...)
-	cmd := exec.Command(c.executable, args...)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
+func (c *Client) BuildPackages(jail string, version string, pkgs []string) error {
+	portsName := FormatPortsName(version)
+	args := append([]string{"bulk", "-j", jail, "-p", portsName}, pkgs...)
+	return c.runCommand(args...)
 }
