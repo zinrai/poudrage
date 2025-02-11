@@ -11,7 +11,7 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Fprintf(os.Stderr, "Usage: %s [setup|validate|build] -c build-env.yaml\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Usage: %s [setup|validate|build|update] -c build-env.yaml\n", os.Args[0])
 		os.Exit(1)
 	}
 
@@ -43,9 +43,14 @@ func main() {
 			fmt.Fprintf(os.Stderr, "build failed: %v\n", err)
 			os.Exit(1)
 		}
+	case "update":
+		if err := runner.Update(cfg); err != nil {
+			fmt.Fprintf(os.Stderr, "update failed: %v\n", err)
+			os.Exit(1)
+		}
 	default:
 		fmt.Fprintf(os.Stderr, "unknown command: %s\n", command)
-		fmt.Fprintf(os.Stderr, "Usage: %s [setup|validate|build] -c build-env.yaml\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Usage: %s [setup|validate|build|update] -c build-env.yaml\n", os.Args[0])
 		os.Exit(1)
 	}
 }

@@ -16,5 +16,9 @@ func Setup(cfg *config.Config) error {
 		return fmt.Errorf("failed to create jail: %w", err)
 	}
 
+	if err := client.CreatePorts(cfg.Environment.Jail.Version); err != nil {
+		return fmt.Errorf("failed to create ports: %w", err)
+	}
+
 	return nil
 }
