@@ -14,5 +14,11 @@ func Validate(cfg *config.Config) error {
 		return fmt.Errorf("jail arch is required")
 	}
 
+	for _, pkg := range cfg.Packages {
+		if pkg.Name == "" {
+			return fmt.Errorf("package name is required")
+		}
+	}
+
 	return nil
 }

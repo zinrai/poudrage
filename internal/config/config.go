@@ -11,8 +11,8 @@ type Environment struct {
 }
 
 type PackageOption struct {
-	Name    string            `yaml:"name"`
-	Options map[string]string `yaml:"options"`
+	Name    string `yaml:"name"`
+	Options string `yaml:"options"`
 }
 
 type Config struct {

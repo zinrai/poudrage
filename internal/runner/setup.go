@@ -40,5 +40,12 @@ func Setup(cfg *config.Config) error {
 		fmt.Printf("Ports already exists: %s\n", cfg.Environment.Jail.Version)
 	}
 
+	for _, pkg := range cfg.Packages {
+		if err := client.SetOptions(pkg.Name, pkg.Options); err != nil {
+			return fmt.Errorf("failed to set options for %s: %w", pkg.Name, err)
+		}
+		fmt.Printf("Set options for package: %s\n", pkg.Name)
+	}
+
 	return nil
 }

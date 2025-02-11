@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
@@ -88,6 +89,21 @@ func (c *Client) PortsExists(version string) (bool, error) {
 		}
 	}
 	return false, nil
+}
+
+func (c *Client) SetOptions(pkgName string, options string) error {
+	optionsDir := fmt.Sprintf("/usr/local/etc/poudriere.d/options/%s", pkgName)
+	optionsPath := filepath.Join(optionsDir, "options")
+
+	if err := os.MkdirAll(optionsDir, 0755); err != nil {
+		return fmt.Errorf("failed to create options directory: %w", err)
+	}
+
+	if err := os.WriteFile(optionsPath, []byte(options), 0644); err != nil {
+		return fmt.Errorf("failed to write options file: %w", err)
+	}
+
+	return nil
 }
 
 func (c *Client) BuildPackages(jail string, pkgs []string) error {
