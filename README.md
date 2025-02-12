@@ -116,7 +116,7 @@ OPTIONS_FILE_UNSET+=HTTP_PERL
 OPTIONS_FILE_SET+=HTTP_RANDOM_INDEX
 ...
 
-# databases/postgresql15-server
+# www/apache24
 OPTIONS_FILE_SET+=SSL
 ...
 ```

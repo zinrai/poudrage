@@ -27,7 +27,6 @@ jobs:
           CGO_ENABLED: 0
         run: |
           go build -o poudrage-freebsd-amd64 cmd/poudrage/main.go
-          chmod +x poudrage-freebsd-amd64
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
