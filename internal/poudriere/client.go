@@ -144,6 +144,6 @@ func (c *Client) PortsExists(version string) (bool, error) {
 
 func (c *Client) BuildPackages(jail string, version string, setname string, pkgs []string) error {
 	portsName := FormatPortsName(version)
-	args := append([]string{"bulk", "-j", jail, "-p", portsName, "-z", setname}, pkgs...)
+	args := append([]string{"bulk", "-c", "-j", jail, "-p", portsName, "-z", setname}, pkgs...)
 	return c.runCommand(args...)
 }

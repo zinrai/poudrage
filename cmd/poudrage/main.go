@@ -11,14 +11,14 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Fprintf(os.Stderr, "Usage: %s [setup|validate|build|update] -c build-env.yaml\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Usage: %s [setup|validate|build|update] -c build.yaml\n", os.Args[0])
 		os.Exit(1)
 	}
 
 	command := os.Args[1]
 	os.Args = append(os.Args[:1], os.Args[2:]...)
 
-	configFile := flag.String("c", "build-env.yaml", "config file path")
+	configFile := flag.String("c", "build.yaml", "config file path")
 	flag.Parse()
 
 	cfg, err := config.Load(*configFile)
@@ -50,7 +50,7 @@ func main() {
 		}
 	default:
 		fmt.Fprintf(os.Stderr, "unknown command: %s\n", command)
-		fmt.Fprintf(os.Stderr, "Usage: %s [setup|validate|build|update] -c build-env.yaml\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Usage: %s [setup|validate|build|update] -c build.yaml\n", os.Args[0])
 		os.Exit(1)
 	}
 }
