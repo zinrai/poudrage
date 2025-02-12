@@ -41,6 +41,18 @@ func (c *Client) runCommandOutput(args ...string) ([]byte, error) {
 	return exec.Command(c.executable, args...).Output()
 }
 
+func (c *Client) WriteMakeConf(jail, version, makeconf string) error {
+	portsName := FormatPortsName(version)
+	makeconfPath := fmt.Sprintf("/usr/local/etc/poudriere.d/%s-%s-make.conf", jail, portsName)
+
+	fmt.Printf("Writing make.conf to: %s\n", makeconfPath)
+	if err := os.WriteFile(makeconfPath, []byte(makeconf), 0644); err != nil {
+		return fmt.Errorf("failed to write make.conf: %w", err)
+	}
+
+	return nil
+}
+
 func (c *Client) CreateJail(name, version, arch string) error {
 	return c.runCommand("jail", "-c", "-j", name, "-v", version, "-a", arch)
 }
