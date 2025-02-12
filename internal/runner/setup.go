@@ -10,6 +10,10 @@ import (
 func Setup(cfg *config.Config) error {
 	client := poudriere.NewClient()
 
+	if err := client.SetupDistfilesCache(); err != nil {
+		return err
+	}
+
 	jailName := poudriere.FormatJailName(cfg.Environment.Jail.Version, cfg.Environment.Jail.Arch)
 
 	if err := client.WriteMakeConf(jailName, cfg.Environment.Jail.Version, cfg.MakeConf.String()); err != nil {

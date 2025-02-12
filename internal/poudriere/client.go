@@ -41,6 +41,33 @@ func (c *Client) runCommandOutput(args ...string) ([]byte, error) {
 	return exec.Command(c.executable, args...).Output()
 }
 
+func (c *Client) SetupDistfilesCache() error {
+	data, err := os.ReadFile("/usr/local/etc/poudriere.conf")
+	if err != nil {
+		return fmt.Errorf("failed to read poudriere.conf: %w", err)
+	}
+
+	lines := strings.Split(string(data), "\n")
+	var distfilesDir string
+	for _, line := range lines {
+		if strings.HasPrefix(line, "DISTFILES_CACHE=") {
+			distfilesDir = strings.TrimPrefix(line, "DISTFILES_CACHE=")
+			break
+		}
+	}
+
+	if distfilesDir == "" {
+		return fmt.Errorf("DISTFILES_CACHE not found in poudriere.conf")
+	}
+
+	fmt.Printf("Creating distfiles directory: %s\n", distfilesDir)
+	if err := os.MkdirAll(distfilesDir, 0755); err != nil {
+		return fmt.Errorf("failed to create distfiles directory: %w", err)
+	}
+
+	return nil
+}
+
 func (c *Client) WriteMakeConf(jail, version, makeconf string) error {
 	portsName := FormatPortsName(version)
 	makeconfPath := fmt.Sprintf("/usr/local/etc/poudriere.d/%s-%s-make.conf", jail, portsName)
