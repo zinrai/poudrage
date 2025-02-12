@@ -5,8 +5,9 @@ import (
 	"github.com/zinrai/poudrage/internal/poudriere"
 )
 
-func Build(cfg *config.Config) error {
+func Build(cfg *config.Config, configFile string) error {
 	client := poudriere.NewClient()
+	setname := config.ExtractSetName(configFile)
 
 	var pkgs []string
 	for _, pkg := range cfg.Packages {
@@ -14,5 +15,5 @@ func Build(cfg *config.Config) error {
 	}
 
 	jailName := poudriere.FormatJailName(cfg.Environment.Jail.Version, cfg.Environment.Jail.Arch)
-	return client.BuildPackages(jailName, cfg.Environment.Jail.Version, pkgs)
+	return client.BuildPackages(jailName, cfg.Environment.Jail.Version, setname, pkgs)
 }

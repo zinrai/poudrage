@@ -7,8 +7,9 @@ import (
 	"github.com/zinrai/poudrage/internal/poudriere"
 )
 
-func Setup(cfg *config.Config) error {
+func Setup(cfg *config.Config, configFile string) error {
 	client := poudriere.NewClient()
+	setname := config.ExtractSetName(configFile)
 
 	if err := client.SetupDistfilesCache(); err != nil {
 		return err
@@ -16,11 +17,11 @@ func Setup(cfg *config.Config) error {
 
 	jailName := poudriere.FormatJailName(cfg.Environment.Jail.Version, cfg.Environment.Jail.Arch)
 
-	if err := client.WriteMakeConf(jailName, cfg.Environment.Jail.Version, cfg.Environment.MakeConf.String()); err != nil {
+	if err := client.WriteMakeConf(jailName, cfg.Environment.Jail.Version, setname, cfg.Environment.MakeConf.String()); err != nil {
 		return err
 	}
 
-	if err := client.WriteOptions(jailName, cfg.Environment.Jail.Version, cfg.Options.String()); err != nil {
+	if err := client.WriteOptions(jailName, cfg.Environment.Jail.Version, setname, cfg.Options.String()); err != nil {
 		return err
 	}
 

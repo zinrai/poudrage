@@ -29,7 +29,7 @@ func main() {
 
 	switch command {
 	case "setup":
-		if err := runner.Setup(cfg); err != nil {
+		if err := runner.Setup(cfg, *configFile); err != nil {
 			fmt.Fprintf(os.Stderr, "setup failed: %v\n", err)
 			os.Exit(1)
 		}
@@ -39,7 +39,7 @@ func main() {
 			os.Exit(1)
 		}
 	case "build":
-		if err := runner.Build(cfg); err != nil {
+		if err := runner.Build(cfg, *configFile); err != nil {
 			fmt.Fprintf(os.Stderr, "build failed: %v\n", err)
 			os.Exit(1)
 		}

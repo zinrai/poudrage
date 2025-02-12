@@ -67,9 +67,10 @@ func (c *Client) SetupDistfilesCache() error {
 	return nil
 }
 
-func (c *Client) WriteMakeConf(jail, version, makeconf string) error {
+func (c *Client) WriteMakeConf(jail, version, setname, makeconf string) error {
 	portsName := FormatPortsName(version)
-	makeconfPath := fmt.Sprintf("/usr/local/etc/poudriere.d/%s-%s-make.conf", jail, portsName)
+	makeconfPath := fmt.Sprintf("/usr/local/etc/poudriere.d/%s-%s-%s-make.conf",
+		jail, portsName, setname)
 
 	fmt.Printf("Writing make.conf to: %s\n", makeconfPath)
 	if err := os.WriteFile(makeconfPath, []byte(makeconf), 0644); err != nil {
@@ -79,9 +80,10 @@ func (c *Client) WriteMakeConf(jail, version, makeconf string) error {
 	return nil
 }
 
-func (c *Client) WriteOptions(jail, version, options string) error {
+func (c *Client) WriteOptions(jail, version, setname, options string) error {
 	portsName := FormatPortsName(version)
-	optionsPath := fmt.Sprintf("/usr/local/etc/poudriere.d/%s-%s-options", jail, portsName)
+	optionsPath := fmt.Sprintf("/usr/local/etc/poudriere.d/%s-%s-%s-options",
+		jail, portsName, setname)
 
 	fmt.Printf("Writing options to: %s\n", optionsPath)
 	if err := os.WriteFile(optionsPath, []byte(options), 0644); err != nil {
@@ -140,8 +142,8 @@ func (c *Client) PortsExists(version string) (bool, error) {
 	return false, nil
 }
 
-func (c *Client) BuildPackages(jail string, version string, pkgs []string) error {
+func (c *Client) BuildPackages(jail string, version string, setname string, pkgs []string) error {
 	portsName := FormatPortsName(version)
-	args := append([]string{"bulk", "-j", jail, "-p", portsName}, pkgs...)
+	args := append([]string{"bulk", "-j", jail, "-p", portsName, "-z", setname}, pkgs...)
 	return c.runCommand(args...)
 }
