@@ -9,6 +9,7 @@ poudrage is a CLI tool for declarative package building with FreeBSD [poudriere]
 - Manage poudriere ports tree creation/update
 - Configure package build options
 - Manage make.conf settings
+- Automatic setname configuration based on YAML filename
 
 ## Requirements
 
@@ -55,6 +56,12 @@ Update jail and ports tree:
 $ sudo poudrage update -c build.yaml
 ```
 
+The setname is automatically derived from the configuration filename:
+
+- `build.yaml` -> setname: "build"
+- `build_env.yaml` -> setname: "build"
+- `build-env.yaml` -> setname: "build"
+
 ## Configuration
 
 ### Jail Configuration
@@ -97,8 +104,8 @@ packages:
 
 ## File Locations
 
-- make.conf: `/usr/local/etc/poudriere.d/<jail>-<ports>-make.conf`
-- Package options: `/usr/local/etc/poudriere.d/<jail>-<ports>-options`
+- make.conf: `/usr/local/etc/poudriere.d/<jail>-<ports>-<setname>-make.conf`
+- Package options: `/usr/local/etc/poudriere.d/<jail>-<ports>-<setname>-options`
 - Distfiles: Uses DISTFILES_CACHE directory from poudriere.conf
 
 The options file will be created with comments indicating which package each set of options belongs to:
