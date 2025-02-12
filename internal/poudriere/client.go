@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"strings"
 )
 
@@ -80,6 +79,18 @@ func (c *Client) WriteMakeConf(jail, version, makeconf string) error {
 	return nil
 }
 
+func (c *Client) WriteOptions(jail, version, options string) error {
+	portsName := FormatPortsName(version)
+	optionsPath := fmt.Sprintf("/usr/local/etc/poudriere.d/%s-%s-options", jail, portsName)
+
+	fmt.Printf("Writing options to: %s\n", optionsPath)
+	if err := os.WriteFile(optionsPath, []byte(options), 0644); err != nil {
+		return fmt.Errorf("failed to write options file: %w", err)
+	}
+
+	return nil
+}
+
 func (c *Client) CreateJail(name, version, arch string) error {
 	return c.runCommand("jail", "-c", "-j", name, "-v", version, "-a", arch)
 }
@@ -127,23 +138,6 @@ func (c *Client) PortsExists(version string) (bool, error) {
 		}
 	}
 	return false, nil
-}
-
-func (c *Client) SetOptions(pkgName string, options string) error {
-	optionsDir := fmt.Sprintf("/usr/local/etc/poudriere.d/options/%s", pkgName)
-	optionsPath := filepath.Join(optionsDir, "options")
-
-	fmt.Printf("Creating directory: %s\n", optionsDir)
-	if err := os.MkdirAll(optionsDir, 0755); err != nil {
-		return fmt.Errorf("failed to create options directory: %w", err)
-	}
-
-	fmt.Printf("Writing options to: %s\n", optionsPath)
-	if err := os.WriteFile(optionsPath, []byte(options), 0644); err != nil {
-		return fmt.Errorf("failed to write options file: %w", err)
-	}
-
-	return nil
 }
 
 func (c *Client) BuildPackages(jail string, version string, pkgs []string) error {

@@ -18,6 +18,7 @@ func Load(path string) (*Config, error) {
 	}
 
 	cfg.InitMakeConf()
+	cfg.InitOptions()
 
 	return &cfg, nil
 }

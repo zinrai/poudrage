@@ -20,6 +20,10 @@ func Setup(cfg *config.Config) error {
 		return err
 	}
 
+	if err := client.WriteOptions(jailName, cfg.Environment.Jail.Version, cfg.Options.String()); err != nil {
+		return err
+	}
+
 	exists, err := client.JailExists(jailName)
 	if err != nil {
 		return err
@@ -46,13 +50,6 @@ func Setup(cfg *config.Config) error {
 		fmt.Printf("Created ports: %s\n", cfg.Environment.Jail.Version)
 	} else {
 		fmt.Printf("Ports already exists: %s\n", cfg.Environment.Jail.Version)
-	}
-
-	for _, pkg := range cfg.Packages {
-		if err := client.SetOptions(pkg.Name, pkg.Options); err != nil {
-			return fmt.Errorf("failed to set options for %s: %w", pkg.Name, err)
-		}
-		fmt.Printf("Set options for package: %s\n", pkg.Name)
 	}
 
 	return nil
