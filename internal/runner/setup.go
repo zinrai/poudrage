@@ -16,7 +16,7 @@ func Setup(cfg *config.Config) error {
 
 	jailName := poudriere.FormatJailName(cfg.Environment.Jail.Version, cfg.Environment.Jail.Arch)
 
-	if err := client.WriteMakeConf(jailName, cfg.Environment.Jail.Version, cfg.MakeConf.String()); err != nil {
+	if err := client.WriteMakeConf(jailName, cfg.Environment.Jail.Version, cfg.Environment.MakeConf.String()); err != nil {
 		return err
 	}
 
